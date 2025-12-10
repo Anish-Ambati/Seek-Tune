@@ -1,15 +1,98 @@
 # 🎧 SeekTune — Shazam-Style Music Recognition System (Python)
 
-SeekTune is a **Shazam-like music recognition system** built using **Python + FastAPI** that can identify songs from short audio clips using **audio fingerprinting**.
+SeekTune is a **Shazam-like music recognition system** built using **Python + FastAPI** that identifies songs from short audio clips using **audio fingerprinting**.
 
-It supports:
+---
 
-- ✅ Uploading & fingerprinting full songs  
-- ✅ Recognizing songs from short clips  
-- ✅ Downloading tracks directly from Spotify links  
-- ✅ Web-based frontend for real-time usage  
+# 🚀 Quick Start (Run the Project in 3 Steps)
 
-This project implements the **core algorithm used by Shazam** using FFT-based spectrograms, spectral peak detection, and time-offset hash matching.
+### **1️⃣ Install dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+(or manually)
+
+```bash
+pip install fastapi uvicorn librosa numpy scipy soundfile yt-dlp python-multipart requests
+```
+
+---
+
+### **2️⃣ Install FFmpeg**
+
+**Windows:**  
+Download from https://ffmpeg.org and add to PATH  
+**Linux:**  
+```bash
+sudo apt install ffmpeg
+```
+
+---
+
+### **3️⃣ Set Spotify API Keys**
+
+Create a free app at:  
+https://developer.spotify.com/dashboard
+
+Then set:
+
+```bash
+setx SPOTIFY_CLIENT_ID "your_client_id"
+setx SPOTIFY_CLIENT_SECRET "your_client_secret"
+```
+
+Restart terminal once.
+
+---
+
+# ▶️ Run Backend Server
+
+```bash
+python main.py serve --port 8000
+```
+
+Server will start at:
+
+```
+http://localhost:8000
+```
+
+---
+
+# ▶️ Run Frontend
+
+```bash
+cd frontend
+python -m http.server 5500
+```
+
+Open browser:
+
+```
+http://localhost:5500
+```
+
+---
+
+# 🎵 Example Commands
+
+### **Download a song from Spotify + fingerprint it**
+
+```bash
+python main.py download https://open.spotify.com/track/0pqnGHJpmpxLKifKRmU6WP
+```
+
+### **Recognize a song from clip**
+
+```bash
+python main.py find clip.wav
+```
+
+---
+
+# 📝 Project Overview
 
 ---
 
@@ -45,129 +128,6 @@ Spotify URL / Audio File / Audio Clip
         🎯 Song Prediction
 ```
 
----
-
-## 📁 Project Structure
-
-```
-seektune/
-│
-├── main.py                  # CLI entry point
-├── config.py                # Global config & paths
-├── utils/                   # Logger & helpers
-│
-├── fingerprint/             # Audio fingerprinting
-│   ├── spectrogram.py
-│   ├── peak_picker.py
-│   ├── hasher.py
-│
-├── matcher/                 # Song matching logic
-│   └── matcher.py
-│
-├── db/                      # SQLite database logic
-│   └── sqlite.py
-│
-├── downloader/              # YouTube + FFmpeg pipeline
-│   ├── youtube.py
-│   ├── ffmpeg.py
-│   └── service.py
-│
-├── spotify/                 # Spotify API integration
-│   └── client.py
-│
-├── api/                     # FastAPI server
-│   └── server.py
-│
-├── frontend/                # Web UI
-│   ├── index.html
-│   └── app.js
-│
-├── songs/                   # Stored WAV files
-├── recordings/              # Uploaded clips
-├── tmp/                     # Temporary files
-├── db/seek_tune.db          # SQLite database
-└── README.md
-```
-
----
-
-## 🛠️ Installation
-
-### 1️⃣ Install Python Dependencies
-
-```bash
-pip install fastapi uvicorn librosa numpy scipy soundfile yt-dlp python-multipart requests
-```
-
----
-
-### 2️⃣ Install FFmpeg
-
-✅ **Windows:**  
-Download from https://ffmpeg.org and add to PATH  
-
-✅ **Linux:**  
-```bash
-sudo apt install ffmpeg
-```
-
----
-
-### 3️⃣ Set Spotify API Keys
-
-Create a Spotify Developer App and set:
-
-```bash
-SPOTIFY_CLIENT_ID=your_client_id
-SPOTIFY_CLIENT_SECRET=your_client_secret
-```
-
----
-
-## ▶️ Running the Project
-
-### ✅ Start Backend Server
-
-```bash
-python main.py serve --port 8000
-```
-
----
-
-### ✅ Open Frontend
-
-```bash
-cd frontend
-python -m http.server 5500
-```
-
-Then open in browser:
-
-```
-http://localhost:5500
-```
-
----
-
-## 🎵 Download Song from Spotify
-
-```bash
-python main.py download <spotify_track_url>
-```
-
-Example:
-
-```bash
-python main.py download https://open.spotify.com/track/0pqnGHJpmpxLKifKRmU6WP
-```
-
----
-
-## 🎙️ Identify a Song from Clip
-
-```bash
-python main.py find clip.wav
-```
 
 ---
 
@@ -220,24 +180,3 @@ This makes the system:
 3. Get real-time prediction on the UI  
 
 ---
-
-## 📌 Resume Description (Use This)
-
-> Built a Shazam-style music recognition system using Python and FastAPI. Implemented audio fingerprinting with FFT-based spectrograms and peak-pair hashing. Integrated Spotify Web API for metadata, YouTube + FFmpeg for audio acquisition, and developed a web interface for real-time song identification.
-
----
-
-## ✅ Status
-
-✅ Backend working  
-✅ Spotify integration working  
-✅ Audio fingerprinting working  
-✅ Real-time song recognition working  
-✅ Frontend UI working  
-
----
-
-## ⚠️ Disclaimer
-
-This project is built for **educational and research purposes only**.  
-It is not intended for commercial use.
