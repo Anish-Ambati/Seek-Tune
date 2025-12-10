@@ -4,20 +4,22 @@ SeekTune is a **Shazam-like music recognition system** built using **Python + Fa
 
 ---
 
-# 🚀 Quick Start (Run the Project in 3 Steps)
+### 📥 Clone the Repository
+
+```bash
+git clone https://github.com/Anish-Ambati/Seek-Tune.git
+cd seektune
+```
+
+---
+
+# Quick Start (Run the Project in 3 Steps)
 
 ### **1️⃣ Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
-
-(or manually)
-
-```bash
-pip install fastapi uvicorn librosa numpy scipy soundfile yt-dlp python-multipart requests
-```
-
 ---
 
 ### **2️⃣ Install FFmpeg**
