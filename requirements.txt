@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+numpy
+scipy
+librosa
+soundfile
+pydub
+sqlalchemy
+pymongo
+python-dotenv
+requests
+yt-dlp

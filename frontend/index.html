@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SeekTune – Shazam Clone</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #111827;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      color: #fbbf24;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      margin-top: 0.25rem;
+      margin-bottom: 0.75rem;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+    .section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #1f2937;
+    }
+    .section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+    input[type="file"] {
+      margin: 0.5rem 0;
+      color: #e5e7eb;
+    }
+    button {
+      background: #fbbf24;
+      border: none;
+      color: #111827;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+    button:hover {
+      background: #facc15;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+    .status {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .status.ok {
+      color: #4ade80;
+    }
+    .status.error {
+      color: #f87171;
+    }
+    .result {
+      margin-top: 0.75rem;
+      background: #020617;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #1f2937;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    code {
+      background: #020617;
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    small {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>SeekTune 🎧</h1>
+    <p>
+      Backend: <code>FastAPI + Python</code><br />
+      Upload full songs to save fingerprints, and short clips to identify tracks.
+    </p>
+
+    <div class="section">
+        <h2>0. Download from Spotify</h2>
+        <p>Paste a Spotify track link. The system will download, convert, and fingerprint it automatically.</p>
+        <input
+            type="text"
+            id="spotifyLink"
+            placeholder="https://open.spotify.com/track/..."
+            style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #1f2937; background:#020617; color:#e5e7eb;"
+        />
+        <br /><br />
+        <button id="spotifyBtn">Download from Spotify</button>
+        <div id="spotifyStatus" class="status"></div>
+        <div id="spotifyResult" class="result" style="display:none;"></div>
+    </div>
+
+
+    <div class="section">
+      <h2>1. Save Song</h2>
+      <p>Select a full song file (WAV/MP3/etc.) and upload it to generate fingerprints.</p>
+      <input type="file" id="saveFile" />
+      <br />
+      <button id="saveBtn">Upload &amp; Save</button>
+      <div id="saveStatus" class="status"></div>
+      <div id="saveResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>2. Find Song</h2>
+      <p>Select a short audio clip. The system will try to recognize the song.</p>
+      <input type="file" id="findFile" />
+      <br />
+      <button id="findBtn">Upload &amp; Find</button>
+      <div id="findStatus" class="status"></div>
+      <div id="findResult" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>API Info</h2>
+      <p>
+        Backend base URL: <code>http://localhost:8000</code><br />
+        Endpoints: <code>POST /api/save</code>, <code>POST /api/find</code>
+      </p>
+      <small>Make sure the backend is running: <code>python main.py serve --port 8000</code></small>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
