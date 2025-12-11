@@ -11,6 +11,7 @@ from fingerprint import generate_fingerprint
 from matcher import match_song
 from fastapi.middleware.cors import CORSMiddleware
 from downloader.service import download_and_fingerprint_from_spotify
+from db.sqlite import get_song_by_id
 from fastapi import Body
 
 logger = get_logger("api")
@@ -47,12 +48,19 @@ async def save_song_api(file: UploadFile = File(...)):
     logger.info(f"[API/save] Saved uploaded file to: {target_path}")
 
     try:
+        # generate_fingerprint accepts optional spotify_url / youtube_url (None here)
         song_id, num_hashes = generate_fingerprint(str(target_path))
+
+        # fetch song row to return any stored links (if available)
+        song = get_song_by_id(song_id)
+
         return {
             "status": "ok",
             "song_id": song_id,
             "hashes": num_hashes,
             "filename": file.filename,
+            "spotify_url": getattr(song, "spotify_url", None),
+            "youtube_url": getattr(song, "youtube_url", None),
         }
     except Exception as e:
         logger.error(f"[API/save] Error: {e}")
@@ -60,7 +68,7 @@ async def save_song_api(file: UploadFile = File(...)):
             status_code=500,
             content={"status": "error", "detail": str(e)},
         )
-
+    
 
 @app.post("/api/find")
 async def find_song_api(file: UploadFile = File(...)):
@@ -80,13 +88,21 @@ async def find_song_api(file: UploadFile = File(...)):
 
     try:
         result = match_song(str(target_path))
+
+        # result should contain 'song_id', 'title', 'artist', 'score'
+        song_obj = get_song_by_id(result["song_id"])
+
+        logger.info(f"[API/find] Returning prediction for song_id={result['song_id']} spotify={getattr(song_obj,'spotify_url',None)} youtube={getattr(song_obj,'youtube_url',None)}")
+
         return {
             "status": "ok",
             "prediction": {
                 "song_id": result["song_id"],
                 "title": result["title"],
                 "artist": result["artist"],
-                "score": result["score"],
+                "score": result.get("score"),
+                "spotify_url": getattr(song_obj, "spotify_url", None),
+                "youtube_url": getattr(song_obj, "youtube_url", None),
             },
         }
     except Exception as e:
@@ -118,7 +134,10 @@ async def download_from_spotify_api(payload: dict = Body(...)):
             "artist": result["artist"],
             "hashes": result["hashes"],
             "wav_path": result["wav_path"],
+            "spotify_url": result.get("spotify_url"),
+            "youtube_url": result.get("youtube_url"),
         }
+
 
     except Exception as e:
         return JSONResponse(

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SeekTune – Shazam Clone</title>
+  <title>SeekTune</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -148,6 +148,21 @@
       <button id="findBtn">Upload &amp; Find</button>
       <div id="findStatus" class="status"></div>
       <div id="findResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- <hr style="border:none;border-top:1px solid #1f2937;margin:1.25rem 0;" /> -->
+
+    <div style="margin-top:0.75rem;">
+      <h3 style="margin:0 0 0.25rem 0;">Or record from microphone</h3>
+      <p style="margin:0 0 0.5rem 0;color:#9ca3af;font-size:0.9rem;">
+        Press the mic, speak/play the audio. Recording stops automatically after <strong>10 seconds</strong>.
+      </p>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <button id="micBtn">🎤 Start Recording</button>
+        <div id="micTimer" style="color:#9ca3af;font-size:0.95rem;">idle</div>
+        <div id="micStatus" style="margin-left:auto;color:#9ca3af;font-size:0.9rem;"></div>
+      </div>
     </div>
 
     <div class="section">

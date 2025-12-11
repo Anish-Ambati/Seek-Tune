@@ -13,10 +13,10 @@ from fingerprint import generate_fingerprint
 logger = get_logger("download_service")
 
 
-def _youtube_download_by_search(query: str, tmp_audio_base: Path) -> Path:
+def _youtube_download_by_search(query: str, tmp_audio_base: Path) -> tuple[Path, dict]:
     """
     Use yt-dlp with 'ytsearch1:' to download the best audio for a search query.
-    Saves to tmp_audio_base.<ext> and returns the actual downloaded file path.
+    Saves to tmp_audio_base.<ext> and returns (downloaded_file_path, info_dict).
     """
     create_folder(tmp_audio_base.parent)
 
@@ -25,8 +25,8 @@ def _youtube_download_by_search(query: str, tmp_audio_base: Path) -> Path:
         "outtmpl": str(tmp_audio_base.with_suffix(".%(ext)s")),
         "quiet": True,
         "noprogress": True,
-        "overwrites": True,       # <--- ensure it overwrites
-        "cachedir": False,        # <--- avoid reusing cache
+        "overwrites": True,
+        "cachedir": False,
     }
 
     logger.info(f"[dl] Searching YouTube for: {query}")
@@ -35,13 +35,14 @@ def _youtube_download_by_search(query: str, tmp_audio_base: Path) -> Path:
         info = ydl.extract_info(f"ytsearch1:{query}", download=True)
 
     # When using ytsearch1, info["entries"][0] contains the actual video
-    if "entries" in info:
-        info = info["entries"][0]
+    if "entries" in info and info["entries"]:
+        info_video = info["entries"][0]
+    else:
+        info_video = info
 
-    ext = info.get("ext", "webm")
-    vid_id = info.get("id")
+    ext = info_video.get("ext", "webm")
+    vid_id = info_video.get("id")
 
-    # Unique temp candidate based on our template
     candidate1 = tmp_audio_base.with_suffix(f".{ext}")
     candidate2 = tmp_audio_base.parent / f"{vid_id}.{ext}"
 
@@ -50,12 +51,14 @@ def _youtube_download_by_search(query: str, tmp_audio_base: Path) -> Path:
     elif candidate2.exists():
         downloaded_path = candidate2
     else:
+        # As a last resort, try to derive filename from info (some yt-dlp configs)
+        # but raise if not found
         raise FileNotFoundError(
             f"[dl] Could not find downloaded file at {candidate1} or {candidate2}"
         )
 
     logger.info(f"[dl] YouTube audio downloaded: {downloaded_path}")
-    return downloaded_path
+    return downloaded_path, info_video
 
 
 def download_and_fingerprint_from_spotify(spotify_url: str) -> dict:
@@ -75,6 +78,8 @@ def download_and_fingerprint_from_spotify(spotify_url: str) -> dict:
           "artist": str,
           "hashes": int,
           "wav_path": str,
+          "spotify_url": str,
+          "youtube_url": str
         }
     """
     client = SpotifyClient()
@@ -95,7 +100,18 @@ def download_and_fingerprint_from_spotify(spotify_url: str) -> dict:
     tmp_audio_base = TMP_DIR / f"spotify_dl_{safe_title}_{safe_artist}"
 
     # 3) Download best audio using yt-dlp search
-    downloaded_path = _youtube_download_by_search(search_query, tmp_audio_base)
+    downloaded_path, info_video = _youtube_download_by_search(search_query, tmp_audio_base)
+
+    # Try to find a canonical YouTube URL
+    yt_url = info_video.get("webpage_url")
+    if not yt_url:
+        vid_id = info_video.get("id")
+        if vid_id:
+            yt_url = f"https://www.youtube.com/watch?v={vid_id}"
+        else:
+            yt_url = None
+
+    logger.info(f"[dl] Selected YouTube URL: {yt_url}")
 
     # 4) Convert to WAV in SONGS_DIR
     create_folder(SONGS_DIR)
@@ -104,10 +120,13 @@ def download_and_fingerprint_from_spotify(spotify_url: str) -> dict:
     wav_path = convert_to_wav(str(downloaded_path), str(wav_target))
 
     # 5) Fingerprint and insert into DB
+    # NOTE: generate_fingerprint should accept spotify_url and youtube_url (see fingerprint changes)
     song_id, num_hashes = generate_fingerprint(
         wav_path,
         title=title,
         artist=artist,
+        spotify_url=spotify_url,
+        youtube_url=yt_url,
     )
 
     logger.info(
@@ -120,4 +139,6 @@ def download_and_fingerprint_from_spotify(spotify_url: str) -> dict:
         "artist": artist,
         "hashes": num_hashes,
         "wav_path": str(wav_path),
+        "spotify_url": spotify_url,
+        "youtube_url": yt_url,
     }

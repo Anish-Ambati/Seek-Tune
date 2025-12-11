@@ -11,7 +11,7 @@ from utils import get_logger
 logger = get_logger("fingerprint")
 
 
-def generate_fingerprint(file_path: str, title: str | None = None, artist: str | None = None):
+def generate_fingerprint(file_path: str, title: str | None = None, artist: str | None = None, spotify_url: str = None, youtube_url: str = None):
     """
     Full pipeline:
         audio file -> spectrogram -> peaks -> hashes -> DB
@@ -49,6 +49,8 @@ def generate_fingerprint(file_path: str, title: str | None = None, artist: str |
         title=inferred_title,
         artist=inferred_artist,
         path=file_path,
+        spotify_url=spotify_url,
+        youtube_url=youtube_url
     )
 
     # 5) Insert fingerprints

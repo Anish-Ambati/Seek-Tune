@@ -38,6 +38,8 @@ class Song(Base):
     title = Column(String, index=True)
     artist = Column(String, index=True)
     path = Column(String, unique=True, index=True)
+    spotify_url = Column(String, nullable=True, index=False)
+    youtube_url = Column(String, nullable=True, index=False)
 
 
 class Fingerprint(Base):
@@ -65,13 +67,15 @@ def init_db():
 # INSERT OPERATIONS
 # -----------------------------
 
-def insert_song(title: str, artist: str, path: str) -> int:
+def insert_song(title: str, artist: str, path: str, spotify_url: str = None, youtube_url: str = None) -> int:
     session = SessionLocal()
 
     song = Song(
         title=title,
         artist=artist,
         path=path,
+        spotify_url=spotify_url,
+        youtube_url=youtube_url,
     )
 
     session.add(song)
@@ -118,6 +122,18 @@ def get_fingerprints_by_hash(hash_value: str):
     session.close()
     return results
 
+def get_song_by_id(song_id: int):
+    """Fetch a Song row by its ID (returns SQLAlchemy Song object or None)."""
+    session = SessionLocal()
+    song = (
+        session.query(Song)
+        .filter(Song.id == song_id)
+        .first()
+    )
+    session.close()
+    return song
+
+
 # -----------------------------
 # ERASE OPERATIONS
 # -----------------------------
@@ -134,13 +150,13 @@ def delete_db():
         logger.warning("SQLite database does not exist.")
 
        
-def get_song_by_id(song_id: int):
-    """Fetch a Song row by its ID."""
-    session = SessionLocal()
-    song = (
-        session.query(Song)
-        .filter(Song.id == song_id)
-        .first()
-    )
-    session.close()
-    return song
+# def get_song_by_id(song_id: int):
+#     """Fetch a Song row by its ID."""
+#     session = SessionLocal()
+#     song = (
+#         session.query(Song)
+#         .filter(Song.id == song_id)
+#         .first()
+#     )
+#     session.close()
+#     return song
