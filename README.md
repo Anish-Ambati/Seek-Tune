@@ -1,10 +1,10 @@
-# 🎧 SeekTune — Shazam-Style Music Recognition System (Python)
+#  SeekTune Music Recognition System (Python)
 
 SeekTune is a **Shazam-like music recognition system** built using **Python + FastAPI** that identifies songs from short audio clips using **audio fingerprinting**.
 
 ---
 
-### 📥 Clone the Repository
+###  Clone the Repository
 
 ```bash
 git clone https://github.com/Anish-Ambati/Seek-Tune.git
@@ -15,14 +15,14 @@ cd seektune
 
 # Quick Start (Run the Project in 3 Steps)
 
-### **1️⃣ Install dependencies**
+### ** Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 ---
 
-### **2️⃣ Install FFmpeg**
+### ** Install FFmpeg**
 
 **Windows:**  
 Download from https://ffmpeg.org and add to PATH  
@@ -33,7 +33,7 @@ sudo apt install ffmpeg
 
 ---
 
-### **3️⃣ Set Spotify API Keys**
+### ** Set Spotify API Keys**
 
 Create a free app at:  
 https://developer.spotify.com/dashboard
@@ -49,7 +49,7 @@ Restart terminal once.
 
 ---
 
-# ▶️ Run Backend Server
+# Run Backend Server
 
 ```bash
 python main.py serve --port 8000
@@ -63,7 +63,7 @@ http://localhost:8000
 
 ---
 
-# ▶️ Run Frontend
+# Run Frontend
 
 ```bash
 cd frontend
@@ -78,7 +78,7 @@ http://localhost:5500
 
 ---
 
-# 🎵 Example Commands
+# Example Commands
 
 ### **Download a song from Spotify + fingerprint it**
 
@@ -94,23 +94,23 @@ python main.py find clip.wav
 
 ---
 
-# 📝 Project Overview
+# Project Overview
 
 ---
 
-## 🚀 Features
+##  Features
 
-- 🎵 Audio fingerprinting using FFT + peak pairing  
-- 🔍 Song identification from short audio clips  
-- 🌐 FastAPI backend with REST APIs  
-- 🎧 Spotify integration (Track → YouTube → WAV → Fingerprint)  
-- 🧠 SQLite database for storing fingerprints  
-- 🖥️ Web frontend for real-time recognition  
-- ⚙️ CLI support (`save`, `find`, `download`, `serve`, `erase`)
+-  Audio fingerprinting using FFT + peak pairing  
+-  Song identification from short audio clips  
+-  FastAPI backend with REST APIs  
+-  Spotify integration (Track → YouTube → WAV → Fingerprint)  
+-  SQLite database for storing fingerprints  
+-  Web frontend for real-time recognition  
+-  CLI support (`save`, `find`, `download`, `serve`, `erase`)
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
 Spotify URL / Audio File / Audio Clip
@@ -127,13 +127,13 @@ Spotify URL / Audio File / Audio Clip
               ↓
        Offset Voting Matcher
               ↓
-        🎯 Song Prediction
+         Song Prediction
 ```
 
 
 ---
 
-## 🧪 API Endpoints
+##  API Endpoints
 
 | Method | Route | Description |
 |--------|--------|-------------|
@@ -144,7 +144,7 @@ Spotify URL / Audio File / Audio Clip
 
 ---
 
-## 🧠 How the Algorithm Works
+##  How the Algorithm Works
 
 1. Convert audio → spectrogram using **FFT**
 2. Detect **local spectral peaks**
@@ -158,13 +158,13 @@ Spotify URL / Audio File / Audio Clip
 
 This makes the system:
 
-- ✅ Noise-resistant  
-- ✅ Fast  
-- ✅ Scalable  
+-  Noise-resistant  
+-  Fast  
+-  Scalable  
 
 ---
 
-## 👨‍💻 Tech Stack
+##  Tech Stack
 
 - **Backend:** Python, FastAPI  
 - **Audio Processing:** Librosa, NumPy, SciPy  
@@ -175,7 +175,7 @@ This makes the system:
 
 ---
 
-## 🧪 Demo Flow
+##  Demo Flow
 
 1. Paste a Spotify link → Download & fingerprint  
 2. Upload a short clip → Recognize song  
